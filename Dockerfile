@@ -11,20 +11,13 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN docker-php-ext-configure zip
 RUN docker-php-ext-install zip pdo pdo_mysql bcmath gmp
 
-WORKDIR /var/www
-
-COPY ./docker/php.ini /usr/local/etc/php/
-
-COPY ./docker/entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh
+WORKDIR /application
 
 COPY . .
+
+RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN composer install
-
-EXPOSE 9000
-
-ENTRYPOINT ["entrypoint.sh"]
-CMD ["php-fpm"]

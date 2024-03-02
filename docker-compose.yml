@@ -5,12 +5,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+    container_name: adoorei
+    working_dir: /application
     volumes:
-      - .:/var/www
-    depends_on:
-      - db
+      - .:/application
     environment:
       DB_CONNECTION: mysql
       DB_HOST: db
@@ -18,11 +16,35 @@ services:
       DB_DATABASE: adoorei
       DB_USERNAME: root
       DB_PASSWORD: root
+    depends_on:
+      - db
+    networks:
+      - adoorei
 
   db:
     image: mysql:latest
+    container_name: adoorei-mysql
     ports:
       - "3307:3306"
     environment:
       MYSQL_DATABASE: adoorei
       MYSQL_ROOT_PASSWORD: root
+    networks:
+      - adoorei
+
+  nginx:
+    image: nginx:alpine
+    container_name: adoorei-nginx
+    working_dir: /application
+    ports:
+      - "8000:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf
+      - .:/var/www
+    depends_on:
+      - app
+    networks:
+      - adoorei
+
+networks:
+  adoorei:
