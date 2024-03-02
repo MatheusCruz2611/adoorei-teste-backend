@@ -15,7 +15,7 @@ class Product extends Model
         'description'
     ];
     protected $casts = [
-        'status' => 'boolean',
-        'price' => 'float'
+        'active' => 'boolean',
+        'price' => 'int'
     ];
 }

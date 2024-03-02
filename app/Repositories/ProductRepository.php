@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 
+use Illuminate\Database\Eloquent\Collection;
+
 use App\Models\Product;
 
 class ProductRepository implements ProductRepositoryInterface
@@ -32,5 +34,15 @@ class ProductRepository implements ProductRepositoryInterface
     public function create(array $data): Product
     {
         return $this->product->create($data);
+    }
+
+    /**
+     * Obtenha todos os produtos ativos.
+     *
+     * @return Collection
+     */
+    public function getAllActiveProducts(): Collection
+    {
+        return $this->product->where('active', true)->get();
     }
 }
