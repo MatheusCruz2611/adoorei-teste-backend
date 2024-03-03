@@ -24,4 +24,5 @@ Route::prefix('sales')->group(function () {
     Route::post('/', [SaleController::class, 'store']);
     Route::get('/', [SaleController::class, 'index']);
     Route::get('/{saleId}', [SaleController::class, 'show']);
+    Route::put('/{saleId}/cancel', [SaleController::class, 'cancel']);
 });

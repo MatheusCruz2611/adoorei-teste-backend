@@ -3,6 +3,7 @@
 namespace App\Repositories\Interfaces;
 
 use App\Models\ProductStock;
+use Exception;
 
 interface ProductStockRepositoryInterface
 {
@@ -47,4 +48,14 @@ interface ProductStockRepositoryInterface
      * @return bool
      */
     public function decreaseStock(int $productId, int $amount): bool;
+
+    /**
+     * Aumenta o estoque de um produto pelo seu ID.
+     *
+     * @param int $productId
+     * @param int $amount
+     * @return bool
+     * @throws Exception
+     */
+    public function increaseStock(int $productId, int $amount): bool;
 }

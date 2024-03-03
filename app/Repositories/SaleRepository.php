@@ -59,4 +59,16 @@ class SaleRepository implements SaleRepositoryInterface
     {
         return $this->sale->find($id);
     }
+
+    /**
+     * Salvar uma venda.
+     *
+     * @param Sale $sale
+     * @return bool
+     */
+    public function save(Sale $sale): Sale
+    {
+        $sale->save();
+        return $sale;
+    }
 }

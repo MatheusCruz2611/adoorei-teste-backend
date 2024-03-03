@@ -31,4 +31,12 @@ interface SaleRepositoryInterface
      * @return Sale|null
      */
     public function find(int $id): ?Sale;
+
+    /**
+     * Salvar uma venda.
+     *
+     * @param Sale $sale
+     * @return bool
+     */
+    public function save(Sale $sale): Sale;
 }

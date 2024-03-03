@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Repositories\Interfaces\ProductStockRepositoryInterface;
 use App\Models\ProductStock;
+use Exception;
 
 class ProductStockRepository implements ProductStockRepositoryInterface
 {
@@ -81,6 +82,27 @@ class ProductStockRepository implements ProductStockRepositoryInterface
     {
         $stock = $this->productStock->where('product_id', $productId)->firstOrFail();
         $stock->amount -= $amount;
+        return $stock->save();
+    }
+
+    /**
+     * Aumenta o estoque de um produto pelo seu ID.
+     *
+     * @param int $productId
+     * @param int $amount
+     * @return bool
+     * @throws Exception
+     */
+    public function increaseStock(int $productId, int $amount): bool
+    {
+        $stock = $this->productStock->where('product_id', $productId)->first();
+
+        if (!$stock) {
+            throw new Exception("Estoque para o produto com ID $productId não encontrado.");
+        }
+
+        $stock->amount += $amount;
+
         return $stock->save();
     }
 }

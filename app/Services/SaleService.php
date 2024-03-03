@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use App\Enums\SaleStatus;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Sale;
 
 class SaleService
 {
@@ -176,6 +177,44 @@ class SaleService
     }
 
     /**
+     * Cancela uma venda específica e reverte os produtos para o estoque.
+     *
+     * @param int $saleId
+     * @return array
+     * @throws Exception
+     */
+    public function cancelSale(int $saleId): array
+    {
+        DB::beginTransaction();
+
+        try {
+            $sale = $this->saleRepository->find($saleId);
+            if (!$sale) {
+                throw new Exception('Venda não encontrada.', 422);
+            }
+
+            if ($sale->status === SaleStatus::Canceled) {
+                throw new Exception('A venda informada já está cancelada.', 422);
+            }
+
+            $sale->status = SaleStatus::Canceled;
+            $this->saleRepository->save($sale);
+
+            // Reverte os produtos para o estoque
+            $this->revertProductsToStock($sale);
+
+            DB::commit();
+
+            return [
+                'message' => 'Venda cancelada com sucesso.'
+            ];
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
      * Verifica se há estoque suficiente para um produto.
      * 
      * @param int $productId 
@@ -238,5 +277,23 @@ class SaleService
         }
 
         return $formattedSales;
+    }
+
+    /**
+     * Reverte os produtos de uma venda específica para o estoque.
+     *
+     * @param Sale $sale
+     * @return void
+     * @throws Exception
+     */
+    private function revertProductsToStock(Sale $sale): void
+    {
+        $products = $sale->products;
+
+        foreach ($products as $product) {
+            $productId = $product->id;
+            $amount = $product->pivot->amount;
+            $this->productStockRepository->increaseStock($productId, $amount);
+        }
     }
 }

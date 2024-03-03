@@ -154,4 +154,22 @@ class SaleController extends Controller
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
         }
     }
+
+    /**
+     * Cancela uma venda específica.
+     *
+     * @param int $saleId
+     * @return JsonResponse
+     */
+    public function cancel(int $saleId): JsonResponse
+    {
+        try {
+            $this->saleService->cancelSale($saleId);
+            return response()->json([
+                'message' => 'Venda cancelada com sucesso.'
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
+        }
+    }
 }
