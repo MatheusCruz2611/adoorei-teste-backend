@@ -27,7 +27,7 @@ class SaleController extends Controller
      *
      * @param array $products Matriz de IDs e quantidades de produtos.
      * @bodyParam products array required Matriz de IDs e quantidades de produtos. Exemplo: [{"product_id":1,"amount":2},{"product_id":2,"amount":3}]
-     * @return array Um array contendo os detalhes da venda criada, incluindo o ID da venda, a quantidade total de produtos vendidos e detalhes de cada produto.
+     * @return JsonResponse Um array contendo os detalhes da venda criada, incluindo o ID da venda, a quantidade total de produtos vendidos e detalhes de cada produto.
      * @throws
      */
     public function store(Request $request): JsonResponse
@@ -72,52 +72,55 @@ class SaleController extends Controller
      * @queryParam per_page Número de itens por página (padrão: 10).
      * 
      * @response {
-     *   "current_page": 1,
-     *   "data": [
-     *     {
-     *       "sales_id": 1,
-     *       "amount": 11600,
-     *       "products": [
-     *         {
-     *           "product_id": 3,
-     *           "amount": 1,
-     *           "name": "Celular 3",
-     *           "price": 9800
-     *         },
-     *         {
-     *           "product_id": 1,
-     *           "amount": 1,
-     *           "name": "Celular 1",
-     *           "price": 1800
-     *         }
-     *       ]
-     *     },
-     *     {
-     *       "sales_id": 2,
-     *       "amount": 9600,
-     *       "products": [
-     *         {
-     *           "product_id": 2,
-     *           "amount": 2,
-     *           "name": "Celular 2",
-     *           "price": 4800
-     *         }
-     *       ]
-     *     }
-     *   ],
-     *   "first_page_url": "...",
-     *   "from": 1,
-     *   "last_page": 1,
-     *   "last_page_url": "...",
-     *   "next_page_url": null,
-     *   "path": "...",
-     *   "per_page": 10,
-     *   "prev_page_url": null,
-     *   "to": 2,
-     *   "total": 2
+     *   "message": "Vendas listadas com sucesso.",
+     *   "data": {
+     *     "current_page": 1,
+     *     "data": [
+     *       {
+     *         "sales_id": 1,
+     *         "amount": 11600,
+     *         "products": [
+     *           {
+     *             "product_id": 3,
+     *             "amount": 1,
+     *             "name": "Celular 3",
+     *             "price": 9800
+     *           },
+     *           {
+     *             "product_id": 1,
+     *             "amount": 1,
+     *             "name": "Celular 1",
+     *             "price": 1800
+     *           }
+     *         ]
+     *       },
+     *       {
+     *         "sales_id": 2,
+     *         "amount": 9600,
+     *         "products": [
+     *           {
+     *             "product_id": 2,
+     *             "amount": 2,
+     *             "name": "Celular 2",
+     *             "price": 4800
+     *           }
+     *         ]
+     *       }
+     *     ],
+     *     "first_page_url": "...",
+     *     "from": 1,
+     *     "last_page": 1,
+     *     "last_page_url": "...",
+     *     "next_page_url": null,
+     *     "path": "...",
+     *     "per_page": 10,
+     *     "prev_page_url": null,
+     *     "to": 2,
+     *     "total": 2
+     *   }
      * }
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $page = $request->query('page', 1);
         $perPage = $request->query('per_page', 10);
@@ -127,6 +130,25 @@ class SaleController extends Controller
             return response()->json([
                 'message' => 'Vendas listadas com sucesso.',
                 'data' => $sales
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
+        }
+    }
+
+    /**
+     * Lista os detalhes de uma única venda.
+     *
+     * @param int $saleId
+     * @return JsonResponse
+     */
+    public function show(int $saleId): JsonResponse
+    {
+        try {
+            $sale = $this->saleService->getSale($saleId);
+            return response()->json([
+                'message' => 'Venda listada com sucesso.',
+                'data' => $sale
             ], 200);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);

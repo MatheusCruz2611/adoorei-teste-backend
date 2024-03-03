@@ -23,4 +23,12 @@ interface SaleRepositoryInterface
      * @return LengthAwarePaginator
      */
     public function paginate(int $perPage = 10, int $page = 1): LengthAwarePaginator;
+
+    /**
+     * Busca uma venda pelo seu ID.
+     *
+     * @param int $id
+     * @return Sale|null
+     */
+    public function find(int $id): ?Sale;
 }

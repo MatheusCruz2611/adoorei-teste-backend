@@ -140,6 +140,42 @@ class SaleService
     }
 
     /**
+     * Retorna os detalhes de uma única venda.
+     *
+     * @param int $saleId
+     * @return array
+     * @throws Exception
+     */
+    public function getSale(int $saleId): array
+    {
+        try {
+            $sale = $this->saleRepository->find($saleId);
+
+            if (!$sale) {
+                return [];
+            }
+
+            $formattedProducts = [];
+            foreach ($sale->products as $product) {
+                $formattedProducts[] = [
+                    'product_id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'amount' => $product->pivot->amount
+                ];
+            }
+
+            return [
+                'sales_id' => $sale->id,
+                'amount' => $sale->price,
+                'products' => $formattedProducts
+            ];
+        } catch (Exception $e) {
+            throw new Exception('Erro ao obter os detalhes da venda.', 400);
+        }
+    }
+
+    /**
      * Verifica se há estoque suficiente para um produto.
      * 
      * @param int $productId 

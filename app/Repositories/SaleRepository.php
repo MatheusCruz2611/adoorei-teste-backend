@@ -48,4 +48,15 @@ class SaleRepository implements SaleRepositoryInterface
             ->groupBy('sales.id')
             ->paginate($perPage, ['*'], 'page', $page);
     }
+
+    /**
+     * Busca uma venda pelo seu ID.
+     *
+     * @param int $id
+     * @return Sale|null
+     */
+    public function find(int $id): ?Sale
+    {
+        return $this->sale->find($id);
+    }
 }
