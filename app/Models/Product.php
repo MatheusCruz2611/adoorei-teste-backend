@@ -18,4 +18,9 @@ class Product extends Model
         'active' => 'boolean',
         'price' => 'int'
     ];
+
+    public function sales()
+    {
+        return $this->belongsToMany(Sale::class, 'sale_products')->withPivot('amount');
+    }
 }

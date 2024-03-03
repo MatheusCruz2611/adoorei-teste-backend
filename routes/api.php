@@ -22,4 +22,5 @@ Route::prefix('products')->group(function () {
 
 Route::prefix('sales')->group(function () {
     Route::post('/', [SaleController::class, 'store']);
+    Route::get('/', [SaleController::class, 'index']);
 });

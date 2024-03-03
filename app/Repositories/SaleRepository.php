@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Sale;
 use App\Repositories\Interfaces\SaleRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class SaleRepository implements SaleRepositoryInterface
 {
@@ -31,5 +32,20 @@ class SaleRepository implements SaleRepositoryInterface
     public function create(array $data): Sale
     {
         return $this->sale->create($data);
+    }
+
+    /**
+     * Lista todas as vendas com paginação.
+     *
+     * @param int $perPage
+     * @param int $page
+     * @return LengthAwarePaginator
+     */
+    public function paginate(int $perPage = 10, int $page = 1): LengthAwarePaginator
+    {
+        return $this->sale
+            ->with('products')
+            ->groupBy('sales.id')
+            ->paginate($perPage, ['*'], 'page', $page);
     }
 }

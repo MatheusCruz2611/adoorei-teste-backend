@@ -23,6 +23,7 @@ class ProductController extends Controller
      * Liste todos os produtos ativos com estoque disponível.
      *
      * @return JsonResponse
+     * @throws
      */
     public function index(): JsonResponse
     {

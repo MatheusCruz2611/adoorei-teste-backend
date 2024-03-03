@@ -64,4 +64,72 @@ class SaleController extends Controller
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
         }
     }
+
+    /**
+     * Lista todas as vendas com paginação.
+     *
+     * @queryParam page Número da página para a paginação (padrão: 1). 
+     * @queryParam per_page Número de itens por página (padrão: 10).
+     * 
+     * @response {
+     *   "current_page": 1,
+     *   "data": [
+     *     {
+     *       "sales_id": 1,
+     *       "amount": 11600,
+     *       "products": [
+     *         {
+     *           "product_id": 3,
+     *           "amount": 1,
+     *           "name": "Celular 3",
+     *           "price": 9800
+     *         },
+     *         {
+     *           "product_id": 1,
+     *           "amount": 1,
+     *           "name": "Celular 1",
+     *           "price": 1800
+     *         }
+     *       ]
+     *     },
+     *     {
+     *       "sales_id": 2,
+     *       "amount": 9600,
+     *       "products": [
+     *         {
+     *           "product_id": 2,
+     *           "amount": 2,
+     *           "name": "Celular 2",
+     *           "price": 4800
+     *         }
+     *       ]
+     *     }
+     *   ],
+     *   "first_page_url": "...",
+     *   "from": 1,
+     *   "last_page": 1,
+     *   "last_page_url": "...",
+     *   "next_page_url": null,
+     *   "path": "...",
+     *   "per_page": 10,
+     *   "prev_page_url": null,
+     *   "to": 2,
+     *   "total": 2
+     * }
+     */
+    public function index(Request $request)
+    {
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 10);
+
+        try {
+            $sales = $this->saleService->paginateSales($perPage, $page);
+            return response()->json([
+                'message' => 'Vendas listadas com sucesso.',
+                'data' => $sales
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
+        }
+    }
 }

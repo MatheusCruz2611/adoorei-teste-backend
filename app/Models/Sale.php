@@ -14,4 +14,13 @@ class Sale extends Model
         'total_products',
         'price'
     ];
+
+    protected $casts = [
+        'price' => 'int'
+    ];
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'sale_products')->withPivot('amount');
+    }
 }

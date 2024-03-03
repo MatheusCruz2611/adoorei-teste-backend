@@ -10,6 +10,7 @@ use App\Services\ProductService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use App\Enums\SaleStatus;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class SaleService
 {
@@ -107,6 +108,38 @@ class SaleService
     }
 
     /**
+     * Lista todas as vendas com paginação.
+     *
+     * @param int $perPage
+     * @param int $page
+     * @return array
+     */
+    public function paginateSales(int $perPage = 10, int $page = 1): array
+    {
+        try {
+            $paginator = $this->saleRepository->paginate($perPage, $page);
+            $formattedData = $this->formatSalesData($paginator);
+
+            return [
+                'current_page' => $paginator->currentPage(),
+                'data' => $formattedData,
+                'first_page_url' => $paginator->url(1),
+                'from' => $paginator->firstItem(),
+                'last_page' => $paginator->lastPage(),
+                'last_page_url' => $paginator->url($paginator->lastPage()),
+                'next_page_url' => $paginator->nextPageUrl(),
+                'path' => $paginator->path(),
+                'per_page' => $paginator->perPage(),
+                'prev_page_url' => $paginator->previousPageUrl(),
+                'to' => $paginator->lastItem(),
+                'total' => $paginator->total(),
+            ];
+        } catch (Exception $e) {
+            throw new Exception('Erro ao listar as vendas.', 400);
+        }
+    }
+
+    /**
      * Verifica se há estoque suficiente para um produto.
      * 
      * @param int $productId 
@@ -137,5 +170,37 @@ class SaleService
         }
 
         return $totalPrice;
+    }
+
+    /**
+     * Formata os dados das vendas para o formato desejado.
+     *
+     * @param LengthAwarePaginator $sales
+     * @return array
+     */
+    private function formatSalesData(LengthAwarePaginator $sales): array
+    {
+        $formattedSales = [];
+
+        foreach ($sales as $sale) {
+            $formattedProducts = [];
+
+            foreach ($sale->products as $product) {
+                $formattedProducts[] = [
+                    'product_id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'amount' => $product->pivot->amount
+                ];
+            }
+
+            $formattedSales[] = [
+                'sales_id' => $sale->id,
+                'amount' => $sale->price,
+                'products' => $formattedProducts
+            ];
+        }
+
+        return $formattedSales;
     }
 }
