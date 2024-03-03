@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Repositories\Interfaces\ProductStockRepositoryInterface;
-
 use App\Models\ProductStock;
 
 class ProductStockRepository implements ProductStockRepositoryInterface
@@ -56,5 +55,32 @@ class ProductStockRepository implements ProductStockRepositoryInterface
     {
         $stock = $this->productStock->where('product_id', $productId)->first();
         return $stock ? $stock->amount : 0;
+    }
+
+    /**
+     * Verifica se a quantidade do produto está disponível no estoque.
+     *
+     * @param int $productId
+     * @param int $amount
+     * @return bool
+     */
+    public function hasSufficientStock(int $productId, int $amount): bool
+    {
+        $stock = $this->productStock->where('product_id', $productId)->first();
+        return $stock && $stock->amount >= $amount;
+    }
+
+    /**
+     * Diminui a quantidade de estoque para um produto específico.
+     *
+     * @param int $productId
+     * @param int $amount
+     * @return bool
+     */
+    public function decreaseStock(int $productId, int $amount): bool
+    {
+        $stock = $this->productStock->where('product_id', $productId)->firstOrFail();
+        $stock->amount -= $amount;
+        return $stock->save();
     }
 }

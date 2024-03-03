@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Exception;
-
 use Illuminate\Http\JsonResponse;
-
 use App\Services\ProductService;
 
+/**
+ * @group Products
+ * APIs para gerenciamento de produtos
+ */
 class ProductController extends Controller
 {
     protected $productService;

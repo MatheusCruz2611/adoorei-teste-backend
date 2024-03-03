@@ -11,6 +11,7 @@ class SaleProduct extends Model
     protected $table = 'sale_products';
     protected $fillable = [
         'product_id',
-        'sale_id'
+        'sale_id',
+        'amount'
     ];
 }

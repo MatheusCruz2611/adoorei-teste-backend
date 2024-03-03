@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SaleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,4 +18,8 @@ use App\Http\Controllers\ProductController;
 
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
+});
+
+Route::prefix('sales')->group(function () {
+    Route::post('/', [SaleController::class, 'store']);
 });

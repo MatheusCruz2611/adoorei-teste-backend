@@ -3,9 +3,7 @@
 namespace App\Repositories;
 
 use App\Repositories\Interfaces\ProductRepositoryInterface;
-
 use Illuminate\Database\Eloquent\Collection;
-
 use App\Models\Product;
 
 class ProductRepository implements ProductRepositoryInterface
@@ -44,5 +42,55 @@ class ProductRepository implements ProductRepositoryInterface
     public function getAllActiveProducts(): Collection
     {
         return $this->product->where('active', true)->get();
+    }
+
+    /**
+     * Verifique se um produto está ativo.
+     *
+     * @param int $productId
+     * @return bool
+     */
+    public function isActive(int $productId): bool
+    {
+        $product = $this->product->find($productId);
+        return $product ? $product->active : false;
+    }
+
+    /**
+     * Verifique se um produto existe.
+     *
+     * @param int $productId
+     * @return bool
+     */
+    public function exists(int $productId): bool
+    {
+        return $this->product->where('id', $productId)->exists();
+    }
+
+    /**
+     * Busca um produto pelo seu ID.
+     *
+     * @param int $id
+     * @return Product|null
+     */
+    public function find(int $id): ?Product
+    {
+        return $this->product->find($id);
+    }
+
+    /**
+     * Retorna o preço do produto com o ID fornecido.
+     *
+     * @param int $productId
+     * @return int
+     */
+    public function getProductPrice(int $productId): int
+    {
+        $product = $this->product->find($productId);
+        if ($product) {
+            return $product->price;
+        } else {
+            return 0;
+        }
     }
 }

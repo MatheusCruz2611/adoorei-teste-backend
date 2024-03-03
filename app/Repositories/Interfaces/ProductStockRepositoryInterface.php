@@ -29,4 +29,22 @@ interface ProductStockRepositoryInterface
      * @return int
      */
     public function getStockByProductId(int $productId): int;
+
+    /**
+     * Verifica se a quantidade do produto está disponível no estoque.
+     *
+     * @param int $productId
+     * @param int $amount
+     * @return bool
+     */
+    public function hasSufficientStock(int $productId, int $amount): bool;
+
+    /**
+     * Diminui a quantidade de estoque para um produto específico.
+     *
+     * @param int $productId
+     * @param int $amount
+     * @return bool
+     */
+    public function decreaseStock(int $productId, int $amount): bool;
 }
